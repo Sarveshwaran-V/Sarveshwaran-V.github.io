@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Classification</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+</head>
+<body>
+    <h1>Webcam Classification</h1>
+    <video id="webcam" autoplay></video>
+    <canvas id="output"></canvas>
+
+    <script>
+        async function loadModel() {
+            const model = await tf.loadLayersModel('file://D:/webcam-classification/model/model.json');
+            return model;
+        }
+
+        async function setupWebcam() {
+            const videoElement = document.getElementById('webcam');
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            videoElement.srcObject = stream;
+            await videoElement.play();
+            return videoElement;
+        }
+
+        async function detectObjects(model, videoElement) {
+            const canvas = document.getElementById('output');
+            const context = canvas.getContext('2d');
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+
+            async function predictFrame() {
+                context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                const imageTensor = tf.browser.fromPixels(canvas);
+                const predictions = model.predict(imageTensor);
+                // Process predictions and display results (e.g., show probabilities)
+                // ...
+
+                // Clean up
+                imageTensor.dispose();
+                await tf.nextFrame();
+                requestAnimationFrame(predictFrame);
+            }
+
+            predictFrame();
+        }
+
+        async function main() {
+            const model = await loadModel();
+            const videoElement = await setupWebcam();
+            detectObjects(model, videoElement);
+        }
+
+        main();
+    </script>
+</body>
+</html>
