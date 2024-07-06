@@ -13,7 +13,7 @@
 
     <script>
         async function loadModel() {
-            const model = await tf.loadLayersModel('file://D:/webcam-classification/model/model.json');
+            const model = await tf.loadLayersModel('https://sarveshwaran-v.github.io/Sarveshwaran-V.github.io/model/model.json');
             return model;
         }
 
@@ -34,7 +34,7 @@
             async function predictFrame() {
                 context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
                 const imageTensor = tf.browser.fromPixels(canvas);
-                const predictions = model.predict(imageTensor);
+                const predictions = model.predict(imageTensor.expandDims(0));
                 // Process predictions and display results (e.g., show probabilities)
                 // ...
 
