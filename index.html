@@ -13,7 +13,10 @@
 
     <script>
         async function loadModel() {
+            // Load the model architecture (model.json) and weights (weights.bin)
             const model = await tf.loadLayersModel('https://sarveshwaran-v.github.io/model/model.json');
+            // Explicitly load the weights
+            await model.loadWeights('https://sarveshwaran-v.github.io/model/weights.bin');
             return model;
         }
 
